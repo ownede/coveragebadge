@@ -112,22 +112,26 @@ class BadgeComposer
                 throw new Exception('Error reading file: ' . $inputFile);
             }
             $xml = new SimpleXMLElement($content);
-            $metrics = $xml->xpath('//metrics');
+            $metrics = $xml->xpath('//project/metrics');
 
             $totalConditionals = 0;
             $totalStatements = 0;
             $coveredStatements = 0;
             $coveredConditionals = 0;
+            $methods = 0;
+            $coveredMethods = 0;
 
             foreach ($metrics as $metric) {
                 $totalConditionals   += (int) $metric['conditionals'];
                 $coveredConditionals += (int) $metric['coveredconditionals'];
-                $totalStatements    += (int) $metric['statements'];
-                $coveredStatements  += (int) $metric['coveredstatements'];
+                $totalStatements     += (int) $metric['statements'];
+                $coveredStatements   += (int) $metric['coveredstatements'];
+                $methods             += (int) $metric['methods'];
+                $coveredMethods      += (int) $metric['coveredmethods'];
             }
 
-            $totalElements = $totalConditionals + $totalStatements;
-            $coveredElements = $coveredConditionals + $coveredStatements;
+            $totalElements = $totalConditionals + $methods + $totalStatements;
+            $coveredElements = $coveredConditionals + $coveredMethods + $coveredStatements;
             $coverageRatio = $totalElements ? $coveredElements / $totalElements : 0;
             $this->totalCoverage[] = (int) round($coverageRatio * 100);
 
